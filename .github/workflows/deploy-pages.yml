@@ -4,6 +4,7 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
 
 permissions:
   contents: read
@@ -25,10 +26,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+          # NOTE: Don't use setup-node's built-in `cache: yarn` here.
+          # It probes `yarn` before Corepack is enabled, which fails when the
+          # runner has Yarn 1.x globally but the repo requires Yarn 4 via
+          # `packageManager` in package.json.
 
       - name: Enable Corepack
-        run: corepack enable
+        run: |
+          corepack enable
+          corepack prepare yarn@4.12.0 --activate
+
+      - name: Cache Yarn artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/install-state.gz
+            node_modules
+            /home/runner/.yarn/berry/cache
+          key: ${{ runner.os }}-node20-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node20-yarn-
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
