@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: url('/images/Background.png') no-repeat center center fixed;
+  background-size: cover;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
