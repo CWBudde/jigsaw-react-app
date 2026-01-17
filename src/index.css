@@ -12,7 +12,7 @@ html, body {
 }
 
 body {
-  background: url('/images/Background.png') no-repeat center center fixed;
+  background: var(--app-background-image, none) no-repeat center center fixed;
   background-size: cover;
   touch-action: none;
   -webkit-user-select: none;

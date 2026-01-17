@@ -56,6 +56,8 @@ The files will be generated in the `dist/` folder. You can test the build locall
 
 This repo includes a GitHub Actions workflow that deploys `dist/` to **GitHub Pages** whenever a **GitHub Release** is published.
 
+Live demo: https://cwbudde.github.io/jigsaw-react-app/
+
 1. In your GitHub repo settings, enable **Pages** and set **Source** to **GitHub Actions**.
 2. Publish a new release (GitHub UI → Releases → “Draft a new release”).
 3. The workflow `Deploy to GitHub Pages` builds the app and deploys it.
