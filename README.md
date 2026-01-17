@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# Jigsaw Puzzle Royale 🧩
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive jigsaw puzzle game built with **React**, **TypeScript**, and **Vite**. Puzzle tiles are rendered on an HTML5 Canvas, providing a smooth gameplay experience with drag-and-drop, snapping, and special effects.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **HTML5 Canvas Rendering:** Fast and efficient rendering even with many puzzle pieces.
+- **Smart Snapping:** Pieces automatically snap into place when they are close enough to their target position.
+- **Interactive Controls:** Support for drag-and-drop and tile rotation.
+- **Visual Feedback:** Confetti effects and victory text upon successful completion.
+- **Modern Tech Stack:** React 19, Zustand for state management, and TypeScript for type safety.
+- **Responsive Design:** Optimized for various screen sizes (with zoom protection on mobile devices).
 
-## React Compiler
+## 🚀 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** [React 19](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+- **Animations/Effects:** `react-confetti` & Custom Canvas Logic
+- **Styling:** CSS3 (Modern Hooks & Flexbox)
 
-## Expanding the ESLint configuration
+## 🛠️ Installation & Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Make sure you have **Node.js** and **Yarn** installed.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/CWBudde/Jigsaw-React-App.git
+   cd Jigsaw-React-App
+   ```
+
+2. Install dependencies:
+   ```bash
+   yarn install
+   ```
+
+3. Start the development server:
+   ```bash
+   yarn dev
+   ```
+
+### Build & Deployment
+
+To create a production-ready version:
+```bash
+yarn build
 ```
+The files will be generated in the `dist/` folder. You can test the build locally with `yarn preview`.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### GitHub Pages (Release Deployment)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This repo includes a GitHub Actions workflow that deploys `dist/` to **GitHub Pages** whenever a **GitHub Release** is published.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. In your GitHub repo settings, enable **Pages** and set **Source** to **GitHub Actions**.
+2. Publish a new release (GitHub UI → Releases → “Draft a new release”).
+3. The workflow `Deploy to GitHub Pages` builds the app and deploys it.
+
+## 📂 Project Structure
+
+- `src/components/`: UI components (Canvas, overlays, effects).
+- `src/hooks/`: Custom hooks for drag-and-drop, animations, and game logic.
+- `src/lib/jigsaw/`: Core logic for puzzle generation and geometry.
+- `src/store/`: Global state with Zustand.
+- `public/`: Static assets like icons, fonts, and images.
+
+## 📝 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+---
+
+Happy puzzling! 🧩✨
