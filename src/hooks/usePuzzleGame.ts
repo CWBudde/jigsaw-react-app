@@ -14,6 +14,10 @@ export function usePuzzleGame(
   const [outlineAlpha, setOutlineAlpha] = useState(1);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const outlineFadeElapsedRef = useRef(0);
+  const dimensionsRef = useRef({ width: canvasWidth, height: canvasHeight });
+
+  // Keep dimensions ref updated
+  dimensionsRef.current = { width: canvasWidth, height: canvasHeight };
 
   const {
     imageUrl,
@@ -30,7 +34,7 @@ export function usePuzzleGame(
     setNeedsRedraw(true);
   }, []);
 
-  // Initialize puzzle
+  // Initialize puzzle (only when imageUrl or tileCount changes)
   useEffect(() => {
     let cancelled = false;
 
@@ -42,8 +46,8 @@ export function usePuzzleGame(
         imageRef.current = image;
 
         const newJigsaw = new Jigsaw(tileCount, tileCount);
-        const width = canvasWidth * PUZZLE_SIZE_RATIO;
-        const height = canvasHeight * PUZZLE_SIZE_RATIO;
+        const width = dimensionsRef.current.width * PUZZLE_SIZE_RATIO;
+        const height = dimensionsRef.current.height * PUZZLE_SIZE_RATIO;
 
         newJigsaw.setSize(width, height);
         newJigsaw.setImageElement(image);
@@ -67,7 +71,20 @@ export function usePuzzleGame(
     return () => {
       cancelled = true;
     };
-  }, [imageUrl, tileCount, canvasWidth, canvasHeight, setStartTime, invalidate]);
+  }, [imageUrl, tileCount, setStartTime, invalidate]);
+
+  // Handle resize (update jigsaw size without recreating)
+  useEffect(() => {
+    if (!jigsaw || !imageRef.current) return;
+    if (canvasWidth === 0 || canvasHeight === 0) return;
+
+    const width = canvasWidth * PUZZLE_SIZE_RATIO;
+    const height = canvasHeight * PUZZLE_SIZE_RATIO;
+
+    jigsaw.setSize(width, height);
+    jigsaw.setImageElement(imageRef.current);
+    invalidate();
+  }, [jigsaw, canvasWidth, canvasHeight, invalidate]);
 
   // Reset outline fade when leaving completion state
   useEffect(() => {

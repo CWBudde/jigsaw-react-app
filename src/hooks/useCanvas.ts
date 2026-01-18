@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 export function useCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,6 +17,7 @@ export function useCanvas() {
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      setDimensions({ width: canvas.width, height: canvas.height });
     };
 
     handleResize();
@@ -26,5 +28,5 @@ export function useCanvas() {
     };
   }, []);
 
-  return { canvasRef, context };
+  return { canvasRef, context, dimensions };
 }

@@ -6,11 +6,11 @@ import { usePuzzleGame } from '@hooks/usePuzzleGame';
 import { usePuzzleStore } from '@store/puzzleStore';
 
 export function PuzzleCanvas() {
-  const { canvasRef, context } = useCanvas();
+  const { canvasRef, context, dimensions } = useCanvas();
   const { isComplete } = usePuzzleStore();
 
-  const canvasWidth = canvasRef.current?.width || 0;
-  const canvasHeight = canvasRef.current?.height || 0;
+  const canvasWidth = dimensions.width;
+  const canvasHeight = dimensions.height;
 
   const {
     jigsaw,
