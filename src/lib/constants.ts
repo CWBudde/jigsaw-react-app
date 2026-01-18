@@ -4,3 +4,4 @@ export const LINK_DISTANCE_THRESHOLD = 20;
 export const TAP_DISTANCE_THRESHOLD = 5;
 export const PUZZLE_SIZE_RATIO = 0.9;
 export const SHUFFLE_ANIMATION_SPEED = 0.4;
+export const OUTLINE_FADE_DURATION_SECONDS = 1.0;

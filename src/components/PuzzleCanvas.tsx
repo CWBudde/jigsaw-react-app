@@ -15,6 +15,7 @@ export function PuzzleCanvas() {
   const {
     jigsaw,
     shuffleProgress,
+    outlineAlpha,
     needsRedraw,
     setNeedsRedraw,
     invalidate,
@@ -64,7 +65,7 @@ export function PuzzleCanvas() {
         }
 
         // Draw jigsaw
-        jigsaw.drawToContext(context);
+        jigsaw.drawToContext(context, { outlineAlpha });
 
         context.globalAlpha = 1;
         setNeedsRedraw(false);
@@ -81,6 +82,7 @@ export function PuzzleCanvas() {
       advanceShuffleAnimation,
       advanceCompletionAnimation,
       setNeedsRedraw,
+      outlineAlpha,
     ]
   );
 

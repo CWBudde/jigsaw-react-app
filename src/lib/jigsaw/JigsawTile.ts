@@ -229,8 +229,7 @@ export class JigsawTile {
     }
   }
 
-  private drawOutlinePath(direction: Direction, oversize: number): void {
-    const ctx = this.context;
+  private drawOutlinePath(ctx: CanvasRenderingContext2D, direction: Direction, oversize: number): void {
     const outline = this.getOutline(direction);
     const baseInset = this.jigsaw.getBaseInset();
 
@@ -354,25 +353,25 @@ export class JigsawTile {
     ctx.moveTo(-0.5 - oversize, -0.5 - oversize);
 
     if (useOutline[Direction.North]) {
-      this.drawOutlinePath(Direction.North, oversize);
+      this.drawOutlinePath(ctx, Direction.North, oversize);
     } else {
       ctx.lineTo(0.5 + oversize, -0.5 - oversize);
     }
 
     if (useOutline[Direction.East]) {
-      this.drawOutlinePath(Direction.East, oversize);
+      this.drawOutlinePath(ctx, Direction.East, oversize);
     } else {
       ctx.lineTo(0.5 + oversize, 0.5 + oversize);
     }
 
     if (useOutline[Direction.South]) {
-      this.drawOutlinePath(Direction.South, oversize);
+      this.drawOutlinePath(ctx, Direction.South, oversize);
     } else {
       ctx.lineTo(-0.5 - oversize, 0.5 + oversize);
     }
 
     if (useOutline[Direction.West]) {
-      this.drawOutlinePath(Direction.West, oversize);
+      this.drawOutlinePath(ctx, Direction.West, oversize);
     } else {
       ctx.lineTo(-0.5 - oversize, -0.5 - oversize);
     }
@@ -407,46 +406,68 @@ export class JigsawTile {
 
     ctx.restore();
 
-    // Draw contour
-    ctx.lineWidth = 1.7 * oversize;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#888';
-
-    ctx.beginPath();
-    ctx.moveTo(-0.5 - oversize, -0.5 - oversize);
-
-    if (useOutline[Direction.North]) {
-      this.drawOutlinePath(Direction.North, oversize);
-    } else {
-      ctx.lineTo(0.5 + oversize, -0.5 - oversize);
-    }
-
-    if (useOutline[Direction.East]) {
-      this.drawOutlinePath(Direction.East, oversize);
-    } else {
-      ctx.lineTo(0.5 + oversize, 0.5 + oversize);
-    }
-
-    if (useOutline[Direction.South]) {
-      this.drawOutlinePath(Direction.South, oversize);
-    } else {
-      ctx.lineTo(-0.5 - oversize, 0.5 + oversize);
-    }
-
-    if (useOutline[Direction.West]) {
-      this.drawOutlinePath(Direction.West, oversize);
-    } else {
-      ctx.lineTo(-0.5 - oversize, -0.5 - oversize);
-    }
-
-    ctx.stroke();
-
     ctx.restore();
 
     this.invalid = false;
   }
 
-  drawToContext(ctx: CanvasRenderingContext2D): void {
+  private drawContourToContext(ctx: CanvasRenderingContext2D, outlineAlpha: number): void {
+    if (outlineAlpha <= 0) return;
+
+    const tileSize = this.jigsaw.getTileSize();
+    const baseInset = this.jigsaw.getBaseInset();
+    const useOutline = this.calculateOutlineUse();
+    const oversize = 1 / Math.max(tileSize.x, tileSize.y);
+
+    ctx.save();
+    ctx.globalAlpha *= outlineAlpha;
+
+    // Align to this tile's offscreen canvas pixel space
+    ctx.translate(this.position.x - this.canvas.width / 2, this.position.y - this.canvas.height / 2);
+
+    // Match the same normalized coordinate system used in renderToCanvas()
+    ctx.translate(
+      (0.5 + baseInset) * tileSize.x,
+      (0.5 + baseInset) * tileSize.y
+    );
+    ctx.scale(tileSize.x, tileSize.y);
+
+    ctx.lineWidth = 1.7 * oversize;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#888';
+
+    // Draw each edge separately, only for non-linked edges
+    if (useOutline[Direction.North]) {
+      ctx.beginPath();
+      ctx.moveTo(-0.5 - oversize, -0.5 - oversize);
+      this.drawOutlinePath(ctx, Direction.North, oversize);
+      ctx.stroke();
+    }
+
+    if (useOutline[Direction.East]) {
+      ctx.beginPath();
+      ctx.moveTo(0.5 + oversize, -0.5 - oversize);
+      this.drawOutlinePath(ctx, Direction.East, oversize);
+      ctx.stroke();
+    }
+
+    if (useOutline[Direction.South]) {
+      ctx.beginPath();
+      ctx.moveTo(0.5 + oversize, 0.5 + oversize);
+      this.drawOutlinePath(ctx, Direction.South, oversize);
+      ctx.stroke();
+    }
+
+    if (useOutline[Direction.West]) {
+      ctx.beginPath();
+      ctx.moveTo(-0.5 - oversize, 0.5 + oversize);
+      this.drawOutlinePath(ctx, Direction.West, oversize);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  drawToContext(ctx: CanvasRenderingContext2D, outlineAlpha: number = 1): void {
     if (this.invalid) {
       this.renderToCanvas();
     }
@@ -459,6 +480,8 @@ export class JigsawTile {
       -this.canvas.height / 2
     );
     ctx.restore();
+
+    this.drawContourToContext(ctx, outlineAlpha);
   }
 
   getCanvas(): HTMLCanvasElement {

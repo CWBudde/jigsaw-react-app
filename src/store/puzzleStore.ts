@@ -20,7 +20,7 @@ interface PuzzleStore {
 export const usePuzzleStore = create<PuzzleStore>((set) => ({
   // Use Vite's BASE_URL so assets resolve on GitHub Pages (repo subpath)
   imageUrl: `${import.meta.env.BASE_URL}images/Motiv1.png`,
-  tileCount: 5,
+  tileCount: 6,
   isComplete: false,
   startTime: null,
   duration: null,

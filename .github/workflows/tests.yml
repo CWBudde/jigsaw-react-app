@@ -1,0 +1,19 @@
+name: tests
+
+# tests runs on every push to any branch.
+
+on: push
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    uses: ./.github/workflows/test-lint.yml
+
+  can-build:
+    uses: ./.github/workflows/test-build.yml

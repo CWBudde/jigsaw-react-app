@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Jigsaw } from '@lib/jigsaw/Jigsaw';
 import { loadImage } from '@lib/utils/imageProcessing';
-import { PUZZLE_SIZE_RATIO, SHUFFLE_ANIMATION_SPEED } from '@lib/constants';
+import { OUTLINE_FADE_DURATION_SECONDS, PUZZLE_SIZE_RATIO, SHUFFLE_ANIMATION_SPEED } from '@lib/constants';
 import { usePuzzleStore } from '@store/puzzleStore';
 
 export function usePuzzleGame(
@@ -11,7 +11,9 @@ export function usePuzzleGame(
   const [jigsaw, setJigsaw] = useState<Jigsaw | null>(null);
   const [shuffleProgress, setShuffleProgress] = useState<number>(0);
   const [needsRedraw, setNeedsRedraw] = useState(false);
+  const [outlineAlpha, setOutlineAlpha] = useState(1);
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const outlineFadeElapsedRef = useRef(0);
 
   const {
     imageUrl,
@@ -48,6 +50,8 @@ export function usePuzzleGame(
 
         setJigsaw(newJigsaw);
         setShuffleProgress(0);
+        setOutlineAlpha(1);
+        outlineFadeElapsedRef.current = 0;
         setStartTime(Date.now());
 
         // Start shuffle animation
@@ -64,6 +68,14 @@ export function usePuzzleGame(
       cancelled = true;
     };
   }, [imageUrl, tileCount, canvasWidth, canvasHeight, setStartTime, invalidate]);
+
+  // Reset outline fade when leaving completion state
+  useEffect(() => {
+    if (!isComplete) {
+      setOutlineAlpha(1);
+      outlineFadeElapsedRef.current = 0;
+    }
+  }, [isComplete]);
 
   // Advance shuffle animation
   const advanceShuffleAnimation = useCallback((deltaTime: number) => {
@@ -83,6 +95,13 @@ export function usePuzzleGame(
   // Advance completion animation
   const advanceCompletionAnimation = useCallback((deltaTime: number) => {
     if (!jigsaw || !isComplete) return;
+
+    // Fade out contour/outline as completion starts
+    outlineFadeElapsedRef.current += deltaTime;
+    const t = Math.min(1, outlineFadeElapsedRef.current / OUTLINE_FADE_DURATION_SECONDS);
+    const eased = t * t * (3 - 2 * t); // smoothstep
+    const nextOutlineAlpha = 1 - eased;
+    setOutlineAlpha((prev) => (Math.abs(prev - nextOutlineAlpha) < 0.01 ? prev : nextOutlineAlpha));
 
     const linkedTiles = jigsaw.getTiles();
     if (linkedTiles.length === 0) return;
@@ -133,6 +152,7 @@ export function usePuzzleGame(
   return {
     jigsaw,
     shuffleProgress,
+    outlineAlpha,
     needsRedraw,
     setNeedsRedraw,
     invalidate,

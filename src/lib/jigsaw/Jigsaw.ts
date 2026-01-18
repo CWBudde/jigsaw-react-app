@@ -268,9 +268,10 @@ export class Jigsaw {
     tile.setShufflePosition(shufflePos);
   }
 
-  drawToContext(ctx: CanvasRenderingContext2D): void {
+  drawToContext(ctx: CanvasRenderingContext2D, options?: { outlineAlpha?: number }): void {
+    const outlineAlpha = options?.outlineAlpha ?? 1;
     for (const tile of this.tiles) {
-      tile.drawToContext(ctx);
+      tile.drawToContext(ctx, outlineAlpha);
     }
   }
 
